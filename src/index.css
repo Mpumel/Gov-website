@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@theme {
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Inter", sans-serif;
+
+  --color-durban-gold: #c8922a;
+  --color-durban-dark: #0f1f0f;
+  --color-durban-sand: #f5f0e0;
+  --color-durban-card: #ede8d8;
+  --color-durban-card-hover: #e4ddc8;
+  --color-durban-border: #d4c9b0;
+  --color-durban-wave: #c8b89a;
+}

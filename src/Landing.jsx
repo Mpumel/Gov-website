@@ -11,7 +11,6 @@ export default function Landing() {
 
       {/* Everything sits above the overlay */}
       <div className="relative z-10 flex items-center justify-between w-full gap-10 flex-col md:flex-row">
-        
         {/* Left — hero text */}
         <div className="flex-1">
           <p className="uppercase text-amber-400 tracking-widest text-sm font-semibold mb-3">
@@ -21,16 +20,18 @@ export default function Landing() {
             Take Care <br /> Of Your City
           </h1>
           <p className="text-white/70 text-lg max-w-sm">
-            Report municipal issues directly to the city. We respond within 48 hours.
+            Report municipal issues directly to the city. We respond within 48
+            hours.
           </p>
         </div>
 
         {/* Right — report form */}
         <form className="relative z-10 shadow-xl shadow-black/40 py-6 px-5 rounded-xl flex w-full md:w-[420px] bg-white flex-col gap-3">
-          
           <div className="border-b-2 border-amber-400 pb-3 mb-1">
             <p className="font-bold text-2xl text-gray-900">Report an Issue</p>
-            <p className="text-gray-400 text-sm mt-1">Let us know what needs fixing</p>
+            <p className="text-gray-400 text-sm mt-1">
+              Let us know what needs fixing
+            </p>
           </div>
 
           {/* Name + Email row */}
