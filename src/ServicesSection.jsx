@@ -65,15 +65,15 @@ function ServiceCard({ service }) {
             ? "bg-durban-card-hover border-durban-gold"
             : "bg-durban-card border-durban-border"
         }`}
-      style={{ minHeight: "110px" }}
+      style={{ minHeight: "150px" }}
     >
       <h3
         className="uppercase mb-5 transition-colors duration-200"
         style={{
           fontFamily: "var(--font-heading)",
-          fontSize: "15px",
+          fontSize: "22px",
           fontWeight: 700,
-          letterSpacing: "0.06em",
+          letterSpacing: "0.04em",
           color: hovered
             ? "var(--color-durban-gold)"
             : "var(--color-durban-dark)",
@@ -271,7 +271,7 @@ export default function ServicesSection() {
           className="uppercase mb-2"
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "10px",
+            fontSize: "13px",
             letterSpacing: "0.25em",
             color: "var(--color-durban-gold)",
           }}
@@ -294,7 +294,7 @@ export default function ServicesSection() {
           className="border-b border-durban-wave pb-5"
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "11px",
+            fontSize: "16px",
             letterSpacing: "0.08em",
             color: "#999",
           }}
@@ -316,7 +316,7 @@ export default function ServicesSection() {
           className="uppercase"
           style={{
             fontFamily: "var(--font-heading)",
-            fontSize: "13px",
+            fontSize: "25px",
             fontWeight: 700,
             letterSpacing: "0.06em",
             color: "var(--color-durban-sand)",
