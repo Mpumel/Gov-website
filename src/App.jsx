@@ -4,6 +4,9 @@ import Landing from "./Landing.jsx";
 import Header from "./Header.jsx";
 import ServicesSection from "./ServicesSection.jsx";
 import "./App.css";
+import EventsSection from "./eventSection.jsx";
+import TourDurban from "./tourSection.jsx";
+import Footer from "./footer.jsx";
 
 function App() {
   return (
@@ -12,6 +15,9 @@ function App() {
       <Landing />
       <NewsSection />
       <ServicesSection />
+      <EventsSection />
+      <TourDurban />
+      <Footer />
     </>
   );
 }

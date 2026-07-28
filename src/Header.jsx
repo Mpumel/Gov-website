@@ -1,80 +1,118 @@
-// import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
-// export default function Header() {
-//   const [menuOpen, setMenuOpen] = useState(false);
+const SA_LANGUAGES = [
+  { code: "EN", name: "English" },
+  { code: "ZU", name: "isiZulu" },
+  { code: "XH", name: "isiXhosa" },
+  { code: "AF", name: "Afrikaans" },
+  { code: "ST", name: "Sesotho" },
+  { code: "TN", name: "Setswana" },
+  { code: "SS", name: "siSwati" },
+  { code: "VE", name: "Tshivenda" },
+  { code: "TS", name: "Xitsonga" },
+  { code: "NR", name: "isiNdebele" },
+  { code: "NSO", name: "Sepedi" },
+];
 
-//   const navLinks = ["Home", "About", "Service", "Contact Us"];
+const WORLD_LANGUAGES = [
+  { code: "FR", name: "Français" },
+  { code: "ES", name: "Español" },
+  { code: "PT", name: "Português" },
+  { code: "AR", name: "العربية" },
+  { code: "HI", name: "हिन्दी" },
+  { code: "ZH", name: "中文" },
+  { code: "DE", name: "Deutsch" },
+  { code: "JA", name: "日本語" },
+];
 
-//   return (
-//     <header className="bg-[#192b19] text-white w-full px-6 py-4">
-//       {/* Main row */}
-//       <div className="flex items-center justify-between max-w-6xl mx-auto">
-//         {/* Logo */}
-//         <div className="uppercase text-2xl font-serif font-extrabold tracking-widest cursor-pointer">
-//           Durban
-//         </div>
+const NAV_LINKS = [
+  "Home",
+  "Services",
+  "News",
+  "Events",
+  "About",
+  "Tourism",
+  "Council",
+];
 
-//         {/* Desktop Nav */}
-//         <ul className="hidden md:flex items-center space-x-1 font-semibold">
-//           {navLinks.map((link) => (
-//             <li
-//               key={link}
-//               className="cursor-pointer px-4 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-yellow-300/30 hover:text-yellow-300"
-//             >
-//               {link}
-//             </li>
-//           ))}
-//         </ul>
+function LanguageSelector() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState({ code: "EN", name: "English" });
+  const ref = useRef(null);
 
-//         {/* Right side — language + mobile burger */}
-//         <div className="flex items-center gap-4">
-//           <span className="cursor-pointer font-bold bg-gradient-to-r from-green-400 via-amber-400 to-yellow-300 bg-clip-text text-transparent hover:opacity-80 transition-opacity duration-300">
-//             English
-//           </span>
+  useEffect(() => {
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
-//           {/* Hamburger — only on mobile */}
-//           <button
-//             className="md:hidden flex flex-col gap-1.5 cursor-pointer"
-//             onClick={() => setMenuOpen(!menuOpen)}
-//           >
-//             <span
-//               className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
-//             />
-//             <span
-//               className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
-//             />
-//             <span
-//               className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
-//             />
-//           </button>
-//         </div>
-//       </div>
+  function select(lang) {
+    setSelected(lang);
+    setOpen(false);
+  }
 
-//       {/* Mobile Menu — slides in when open */}
-//       {menuOpen && (
-//         <ul className="md:hidden mt-4 flex flex-col space-y-1 font-semibold border-t border-white/10 pt-4">
-//           {navLinks.map((link) => (
-//             <li
-//               key={link}
-//               className="cursor-pointer px-4 py-3 rounded-md hover:bg-yellow-300/20 hover:text-yellow-300 transition-all duration-300"
-//             >
-//               {link}
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//     </header>
-//   );
-// }
-//
-import { useState, useEffect } from "react";
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 border-2 border-[#C8922A]/40 rounded 
+        text-white/70 text-[18px] px-2.5 py-1 tracking-wide hover:border-[#C8922A] 
+        hover:text-white transition-all"
+      >
+        🌐 {selected.code} — {selected.name}
+        <span className="text-[#C8922A] text-[18px]">▾</span>
+      </button>
+
+      {open && (
+        <div
+          className="absolute top-[calc(100%+6px)] left-1/2 -translate-x-1/2 
+          bg-[#0F1F0F] border border-[#C8922A]/30 rounded-md z-50 
+          min-w-[185px] max-h-[260px] overflow-y-auto"
+        >
+          <p
+            className="text-[15px] uppercase tracking-widest text-[#C8922A] 
+          px-3 py-2 border-b border-white/5"
+          >
+            South African languages
+          </p>
+          {SA_LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => select(lang)}
+              className="block w-full text-left px-3 py-2 text-[15px] 
+              text-white/60 hover:bg-[#C8922A]/10 hover:text-[#C8922A] transition-colors"
+            >
+              {lang.name}
+            </button>
+          ))}
+          <p
+            className="text-[10px] uppercase tracking-widest text-[#C8922A] 
+          px-3 py-2 border-b border-white/5 border-t border-t-white/5"
+          >
+            World languages
+          </p>
+          {WORLD_LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => select(lang)}
+              className="block w-full text-left px-3 py-2 text-[12px] 
+              text-white/60 hover:bg-[#C8922A]/10 hover:text-[#C8922A] transition-colors"
+            >
+              {lang.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScroll, setLastScroll] = useState(0);
-
-  const navLinks = ["Home", "About", "Services", "Contact"];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,91 +126,134 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 
+      className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500
       ${visible ? "translate-y-0" : "-translate-y-full"}`}
     >
-      {/* Top thin gold line — identity stripe */}
-      <div className="w-full h-1 bg-[#C8922A]" />
+      {/* TOP BAR — dark, logo + language + auth */}
+      <div className="bg-[#0F1F0F] px-6 md:px-12 py-2 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex flex-col leading-none cursor-pointer gap-0.5">
+          <span className="uppercase font-extrabold text-[35px] tracking-widest text-white">
+            eThekwini
+          </span>
+          <span className="text-[#C8922A] text-[15px] tracking-[0.35em] uppercase font-semibold">
+            Municipality
+          </span>
+        </div>
 
-      <div className="bg-[#0F1F0F] text-white px-6 py-4">
-        <div className="flex items-center justify-between max-w-6xl mx-auto">
-          {/* Logo */}
-          <div className="flex flex-col leading-none cursor-pointer">
-            <span className="uppercase font-extrabold text-2xl tracking-widest text-white">
-              eThekwini
-            </span>
-            <span className="text-[#C8922A] text-xs tracking-[0.3em] uppercase font-semibold">
-              Municipality
-            </span>
-          </div>
+        {/* Language selector — centered */}
+        <div className="hidden md:block">
+          <LanguageSelector />
+        </div>
 
-          {/* Desktop Nav */}
-          <ul className="hidden md:flex items-center gap-1 font-semibold text-sm">
-            {navLinks.map((link) => (
-              <li
-                key={link}
-                className="cursor-pointer px-4 py-2 text-white/70 hover:text-white 
-                transition-colors duration-200 tracking-wide uppercase text-xs"
-              >
-                {link}
-              </li>
-            ))}
-          </ul>
+        {/* Auth */}
+        <div className="hidden md:flex items-center gap-3">
+          <a
+            href="/register"
+            className="text-[15px] text-white/45 hover:text-white transition-colors tracking-wide"
+          >
+            Register
+          </a>
+          <div className="w-px h-3 bg-white/15" />
+          <a
+            href="/login"
+            className="text-[15px] font-medium uppercase tracking-widest border 
+            border-[#C8922A]/50 rounded-sm text-[#C8922A] px-3 py-1 
+            hover:bg-[#C8922A] hover:text-[#0F1F0F] transition-all"
+          >
+            Sign in
+          </a>
+        </div>
 
-          {/* Right — Report button + burger */}
-          <div className="flex items-center gap-4">
-            <button
-              className="hidden md:block text-xs font-bold uppercase tracking-widest 
-              border border-[#C8922A] text-[#C8922A] px-4 py-2 
-              hover:bg-[#C8922A] hover:text-white transition-all duration-300"
+        {/* Hamburger */}
+        <button
+          className="md:hidden flex flex-col gap-1.5"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span
+            className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+          />
+          <span
+            className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
+          />
+          <span
+            className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          />
+        </button>
+      </div>
+
+      {/* MAIN NAV BAR — white */}
+      <div className="hidden md:flex bg-white border-b border-gray-200 px-6 md:px-12 items-center justify-between h-[52px]">
+        <nav className="flex items-center">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link}
+              href={`#${link.toLowerCase()}`}
+              className="text-[12px] font-medium uppercase tracking-wider text-gray-500 
+              px-4 h-[52px] flex items-center border-b-2 border-transparent 
+              hover:text-[#0F1F0F] hover:border-[#C8922A] transition-all"
             >
-              Report Issue
-            </button>
+              {link}
+            </a>
+          ))}
+        </nav>
 
-            {/* Hamburger */}
-            <button
-              className="md:hidden flex flex-col gap-1.5"
-              onClick={() => setMenuOpen(!menuOpen)}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 border border-gray-200 rounded-full px-3 py-1.5 bg-gray-50">
+            <svg
+              className="w-3.5 h-3.5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
             >
-              <span
-                className={`block h-0.5 w-6 bg-white transition-all duration-300 
-                ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
-              />
-              <span
-                className={`block h-0.5 w-6 bg-white transition-all duration-300 
-                ${menuOpen ? "opacity-0" : ""}`}
-              />
-              <span
-                className={`block h-0.5 w-6 bg-white transition-all duration-300 
-                ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
-              />
-            </button>
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search eThekwini..."
+              className="bg-transparent text-[12px] text-gray-600 outline-none w-32 placeholder:text-gray-300"
+            />
           </div>
+          <button className="text-[11px] font-semibold uppercase tracking-wide bg-[#0F1F0F] text-white px-4 py-2 rounded-sm hover:bg-[#C8922A] transition-colors">
+            Report issue
+          </button>
         </div>
       </div>
+
+      {/* Gold closing stripe */}
+      <div className="hidden md:block h-[3px] bg-gradient-to-r from-[#C8922A] via-[#e8b84b] to-[#C8922A]" />
 
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#0F1F0F] border-t border-white/10 px-6 pb-6">
           <ul className="flex flex-col gap-1 pt-4">
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <li
                 key={link}
-                className="cursor-pointer px-4 py-3 text-white/70 hover:text-white 
-                uppercase text-xs tracking-widest font-semibold 
-                border-b border-white/5 transition-colors duration-200"
+                className="px-4 py-3 text-white/70 hover:text-white uppercase 
+                text-xs tracking-widest font-semibold border-b border-white/5 
+                transition-colors cursor-pointer"
               >
                 {link}
               </li>
             ))}
           </ul>
-          <button
-            className="mt-4 w-full text-xs font-bold uppercase tracking-widest 
-            border border-[#C8922A] text-[#C8922A] px-4 py-3
-            hover:bg-[#C8922A] hover:text-white transition-all duration-300"
-          >
-            Report Issue
-          </button>
+          <div className="mt-4 flex gap-3">
+            <a
+              href="/register"
+              className="flex-1 text-center text-xs font-bold uppercase tracking-widest border border-white/20 text-white/60 px-4 py-3"
+            >
+              Register
+            </a>
+            <a
+              href="/login"
+              className="flex-1 text-center text-xs font-bold uppercase tracking-widest border border-[#C8922A] text-[#C8922A] px-4 py-3"
+            >
+              Sign in
+            </a>
+          </div>
         </div>
       )}
     </header>

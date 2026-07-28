@@ -94,8 +94,11 @@ function PeekCard({ event, onClick }) {
 function EventCard({ event }) {
   return (
     <div
-      className="flex-1 flex flex-col rounded-xl overflow-hidden bg-white"
-      style={{ boxShadow: "0 4px 18px rgba(0,0,0,0.08)", height: "440px" }}
+      className="flex-1 flex flex-col rounded-xl overflow-hidden bg-white "
+      style={{
+        boxShadow: "0 4px 18px rgba(0,0,0,0.08)",
+        height: "440px",
+      }}
     >
       {/* Image */}
       <div
@@ -145,7 +148,7 @@ function EventCard({ event }) {
             style={{
               background: "var(--color-durban-gold)",
               color: "#fff",
-              fontSize: "7px",
+              fontSize: "var(--text-event-tag)",
               fontWeight: 700,
               letterSpacing: "0.15em",
               textTransform: "uppercase",
@@ -172,7 +175,7 @@ function EventCard({ event }) {
 
       {/* Body */}
       <div
-        className="flex flex-col flex-1 justify-between"
+        className="flex flex-col flex-1 gap-7"
         style={{ padding: "14px 16px", borderTop: "1px solid #f0ebe0" }}
       >
         <p
@@ -188,7 +191,7 @@ function EventCard({ event }) {
         </p>
 
         <div className="flex flex-col" style={{ gap: "6px" }}>
-          <div className="flex items-center" style={{ gap: "7px" }}>
+          <div className="flex items-center">
             <span
               style={{
                 width: "12px",
@@ -204,6 +207,7 @@ function EventCard({ event }) {
                 fontSize: "var(--text-event-tag)",
                 color: "#666",
               }}
+              className="font-bold"
             >
               {event.dateEnd
                 ? `${event.dateStart} — ${event.dateEnd}`
@@ -219,6 +223,7 @@ function EventCard({ event }) {
                 flexShrink: 0,
                 display: "inline-block",
               }}
+              className="font-bold"
             />
             <span
               style={{
@@ -226,6 +231,7 @@ function EventCard({ event }) {
                 fontSize: "var(--text-event-tag)",
                 color: "#666",
               }}
+              className="font-bold"
             >
               {event.time}
             </span>
@@ -246,6 +252,7 @@ function EventCard({ event }) {
                 fontSize: "var(--text-event-tag)",
                 color: "#666",
               }}
+              className="font-bold"
             >
               {event.location}
             </span>
@@ -285,18 +292,6 @@ export default function EventsSection() {
       }}
     >
       <div className="max-w-7xl mx-auto mb-10">
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "var(--text-section-label)",
-            letterSpacing: "0.25em",
-            textTransform: "uppercase",
-            color: "var(--color-durban-gold)",
-            marginBottom: "8px",
-          }}
-        >
-          eThekwini Municipality
-        </p>
         <h2
           style={{
             fontFamily: "var(--font-heading)",
@@ -312,7 +307,7 @@ export default function EventsSection() {
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "var(--text-section-sub)",
-            color: "#999",
+            color: "var(--color-durban-sub)",
             letterSpacing: "0.05em",
           }}
         >

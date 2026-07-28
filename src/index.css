@@ -1,15 +1,31 @@
 @import "tailwindcss";
-
 @theme {
-  --font-heading: "Playfair Display", serif;
+  --font-heading: "Poppins", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "Inter", sans-serif;
 
   --color-durban-gold: #c8922a;
-  --color-durban-dark: #0f1f0f;
+
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Inter", sans-serif;
+
+  --color-durban-gold: #c8922a;
+  --color-durban-dark: #0f172a;
+  --color-durban-green: #0f1f0f;
+  --color-durban-sub: #6b7280;
   --color-durban-sand: #f5f0e0;
   --color-durban-card: #ede8d8;
   --color-durban-card-hover: #e4ddc8;
   --color-durban-border: #d4c9b0;
   --color-durban-wave: #c8b89a;
+  --color-durban-ocean: #eaf0f5;
+
+  --text-section-label: 15px;
+  --text-section-title: 56px;
+  --text-section-sub: 20px;
+  --text-event-title: 27px;
+  --text-event-desc: 15px;
+  --text-event-meta: 12px;
+  --text-event-tag: 15px;
 }
