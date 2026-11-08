@@ -1,63 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "./api/axios"; // Assuming you have an API utility for fetching data
 
-const EVENTS = [
-  {
-    id: 1,
-    category: "Community",
-    title: "Durban July Charity Gala 2026",
-    description:
-      "An exclusive fundraising evening bringing together Durban's business leaders to support township development.",
-    dateStart: "12 July 2026",
-    dateEnd: "14 July 2026",
-    time: "18:00 – 22:00",
-    location: "Durban ICC",
-    featured: true,
-    color: "#1A2E1A",
-    image: null,
-  },
-  {
-    id: 2,
-    category: "Music",
-    title: "Umlazi Youth Music Festival",
-    description:
-      "Live performances across multiple stages celebrating Durban's emerging music talent. Free to attend.",
-    dateStart: "20 July 2026",
-    dateEnd: null,
-    time: "10:00 – 18:00",
-    location: "Umlazi Mega City",
-    featured: false,
-    color: "#1a3a4a",
-    image: null,
-  },
-  {
-    id: 3,
-    category: "Culture",
-    title: "Heritage Day Cultural March",
-    description:
-      "Thousands of residents march through the CBD celebrating South Africa's rich cultural heritage with live performances.",
-    dateStart: "24 September 2026",
-    dateEnd: null,
-    time: "09:00 – 14:00",
-    location: "City Hall, Durban CBD",
-    featured: false,
-    color: "#2a4a3a",
-    image: null,
-  },
-  {
-    id: 4,
-    category: "Sport",
-    title: "eThekwini Marathon 2026",
-    description:
-      "Durban's biggest annual road race with full, half, and fun run categories. All proceeds go to youth development.",
-    dateStart: "8 August 2026",
-    dateEnd: null,
-    time: "06:00 – 12:00",
-    location: "Moses Mabhida Stadium",
-    featured: true,
-    color: "#2a1a3a",
-    image: null,
-  },
-];
+// -----------------------------------------------------------------------
+// FALLBACK COLORS — used when the backend doesn't supply one
+// Cycles through these for visual variety across event cards
+// -----------------------------------------------------------------------
+const CARD_COLORS = ["#1A2E1A", "#1a3a4a", "#2a4a3a", "#2a1a3a"];
 
 function PeekCard({ event, onClick }) {
   return (
@@ -70,7 +18,7 @@ function PeekCard({ event, onClick }) {
     >
       <div
         style={{
-          background: event.color,
+          background: event.color || CARD_COLORS[0],
           minHeight: "440px",
           borderRadius: "10px",
           flex: 1,
@@ -91,21 +39,32 @@ function PeekCard({ event, onClick }) {
   );
 }
 
-function EventCard({ event }) {
+function EventCard({ event, colorIndex }) {
+  // Format the date from PostgreSQL ISO string to readable format
+  // e.g. "2026-07-12T00:00:00.000Z" → "12 July 2026"
+  function formatDate(dateStr) {
+    if (!dateStr) return null;
+    return new Date(dateStr).toLocaleDateString("en-ZA", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  const cardColor = event.color || CARD_COLORS[colorIndex % CARD_COLORS.length];
+  const formattedDate = formatDate(event.date);
+
   return (
     <div
-      className="flex-1 flex flex-col rounded-xl overflow-hidden bg-white "
-      style={{
-        boxShadow: "0 4px 18px rgba(0,0,0,0.08)",
-        height: "440px",
-      }}
+      className="flex-1 flex flex-col rounded-xl overflow-hidden bg-white"
+      style={{ boxShadow: "0 4px 18px rgba(0,0,0,0.08)", height: "440px" }}
     >
-      {/* Image */}
+      {/* Image / color banner */}
       <div
         className="relative flex items-end overflow-hidden"
         style={{ height: "48%", flexShrink: 0, padding: "12px" }}
       >
-        <div className="absolute inset-0" style={{ background: event.color }} />
+        <div className="absolute inset-0" style={{ background: cardColor }} />
         {event.image && (
           <img
             src={event.image}
@@ -113,6 +72,7 @@ function EventCard({ event }) {
             className="absolute inset-0 w-full h-full object-cover"
           />
         )}
+        {/* Gradient overlay so text is readable over the image/color */}
         <div
           className="absolute inset-0"
           style={{
@@ -122,6 +82,7 @@ function EventCard({ event }) {
           }}
         />
 
+        {/* Featured badge */}
         {event.featured && (
           <span
             className="absolute top-2.5 right-2.5"
@@ -142,6 +103,7 @@ function EventCard({ event }) {
           </span>
         )}
 
+        {/* Category + title overlaid on image */}
         <div className="relative" style={{ zIndex: 2, width: "100%" }}>
           <span
             className="inline-block mb-1.5"
@@ -157,7 +119,7 @@ function EventCard({ event }) {
               fontFamily: "var(--font-body)",
             }}
           >
-            {event.category}
+            {event.category || "General"}
           </span>
           <h3
             style={{
@@ -173,7 +135,7 @@ function EventCard({ event }) {
         </div>
       </div>
 
-      {/* Body */}
+      {/* Card body — description + meta */}
       <div
         className="flex flex-col flex-1 gap-7"
         style={{ padding: "14px 16px", borderTop: "1px solid #f0ebe0" }}
@@ -190,73 +152,101 @@ function EventCard({ event }) {
           {event.description}
         </p>
 
+        {/* Date, time, location — gold dash as bullet */}
         <div className="flex flex-col" style={{ gap: "6px" }}>
-          <div className="flex items-center">
-            <span
-              style={{
-                width: "12px",
-                height: "1px",
-                background: "var(--color-durban-gold)",
-                flexShrink: 0,
-                display: "inline-block",
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-event-tag)",
-                color: "#666",
-              }}
-              className="font-bold"
-            >
-              {event.dateEnd
-                ? `${event.dateStart} — ${event.dateEnd}`
-                : event.dateStart}
-            </span>
-          </div>
-          <div className="flex items-center" style={{ gap: "7px" }}>
-            <span
-              style={{
-                width: "12px",
-                height: "1px",
-                background: "var(--color-durban-gold)",
-                flexShrink: 0,
-                display: "inline-block",
-              }}
-              className="font-bold"
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-event-tag)",
-                color: "#666",
-              }}
-              className="font-bold"
-            >
-              {event.time}
-            </span>
-          </div>
-          <div className="flex items-center" style={{ gap: "7px" }}>
-            <span
-              style={{
-                width: "12px",
-                height: "1px",
-                background: "var(--color-durban-gold)",
-                flexShrink: 0,
-                display: "inline-block",
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "var(--text-event-tag)",
-                color: "#666",
-              }}
-              className="font-bold"
-            >
-              {event.location}
-            </span>
-          </div>
+          {formattedDate && (
+            <div className="flex items-center" style={{ gap: "7px" }}>
+              <span
+                style={{
+                  width: "12px",
+                  height: "1px",
+                  background: "var(--color-durban-gold)",
+                  flexShrink: 0,
+                  display: "inline-block",
+                }}
+              />
+              <span
+                className="font-bold"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-event-tag)",
+                  color: "#666",
+                }}
+              >
+                {formattedDate}
+              </span>
+            </div>
+          )}
+
+          {event.time && (
+            <div className="flex items-center" style={{ gap: "7px" }}>
+              <span
+                style={{
+                  width: "12px",
+                  height: "1px",
+                  background: "var(--color-durban-gold)",
+                  flexShrink: 0,
+                  display: "inline-block",
+                }}
+              />
+              <span
+                className="font-bold"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-event-tag)",
+                  color: "#666",
+                }}
+              >
+                {event.time}
+              </span>
+            </div>
+          )}
+
+          {event.location && (
+            <div className="flex items-center" style={{ gap: "7px" }}>
+              <span
+                style={{
+                  width: "12px",
+                  height: "1px",
+                  background: "var(--color-durban-gold)",
+                  flexShrink: 0,
+                  display: "inline-block",
+                }}
+              />
+              <span
+                className="font-bold"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "var(--text-event-tag)",
+                  color: "#666",
+                }}
+              >
+                {event.location}
+              </span>
+              {/* Price — shows Free or ticket price */}
+              <div className="flex items-center" style={{ gap: "7px" }}>
+                <span
+                  style={{
+                    width: "12px",
+                    height: "1px",
+                    background: "var(--color-durban-gold)",
+                    flexShrink: 0,
+                    display: "inline-block",
+                  }}
+                />
+                <span
+                  className="font-bold"
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "var(--text-event-tag)",
+                    color: event.price === "Free" ? "#16a34a" : "#666",
+                  }}
+                >
+                  {event.price || "Free"}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -265,23 +255,114 @@ function EventCard({ event }) {
 
 export default function EventsSection() {
   const [startIndex, setStartIndex] = useState(0);
+  // events holds the data fetched from the backend
+  const [events, setEvents] = useState([]);
+  // loading and error states for UX feedback
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const VISIBLE_COUNT = 3;
 
-  // Get the 3 visible events (with nulls if at the end)
+  // Fetch events from backend when component mounts
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const res = await api.get("/events");
+        setEvents(res.data);
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+        setError("Could not load events.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvents();
+  }, []); // empty array = run once on mount
+
   const visibleEvents = Array.from({ length: VISIBLE_COUNT }, (_, i) => {
     const idx = startIndex + i;
-    return idx < EVENTS.length ? EVENTS[idx] : null;
+    return idx < events.length ? events[idx] : null;
   });
 
-  // Peek cards: previous event before the window, next event after the window
-  const prevEvent = startIndex > 0 ? EVENTS[startIndex - 1] : null;
+  const prevEvent = startIndex > 0 ? events[startIndex - 1] : null;
   const nextEvent =
-    startIndex + VISIBLE_COUNT < EVENTS.length
-      ? EVENTS[startIndex + VISIBLE_COUNT]
+    startIndex + VISIBLE_COUNT < events.length
+      ? events[startIndex + VISIBLE_COUNT]
       : null;
 
   const canGoPrev = startIndex > 0;
-  const canGoNext = startIndex + VISIBLE_COUNT < EVENTS.length;
+  const canGoNext = startIndex + VISIBLE_COUNT < events.length;
+
+  // -----------------------------------------------------------------------
+  // LOADING STATE — shown while waiting for the API response
+  // -----------------------------------------------------------------------
+  if (loading) {
+    return (
+      <section
+        className="w-full py-20 px-6 md:px-12 flex items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-durban-sand) 0%, var(--color-durban-ocean) 100%)",
+          minHeight: "500px",
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            color: "var(--color-durban-sub)",
+            fontSize: "var(--text-section-sub)",
+          }}
+        >
+          Loading events...
+        </p>
+      </section>
+    );
+  }
+
+  // -----------------------------------------------------------------------
+  // ERROR STATE — shown if the API call fails
+  // -----------------------------------------------------------------------
+  if (error) {
+    return (
+      <section
+        className="w-full py-20 px-6 md:px-12 flex items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-durban-sand) 0%, var(--color-durban-ocean) 100%)",
+          minHeight: "500px",
+        }}
+      >
+        <p style={{ color: "#E63946", fontFamily: "var(--font-body)" }}>
+          {error}
+        </p>
+      </section>
+    );
+  }
+
+  // -----------------------------------------------------------------------
+  // EMPTY STATE — shown if the database has no events yet
+  // -----------------------------------------------------------------------
+  if (events.length === 0) {
+    return (
+      <section
+        className="w-full py-20 px-6 md:px-12 flex items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--color-durban-sand) 0%, var(--color-durban-ocean) 100%)",
+          minHeight: "500px",
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            color: "var(--color-durban-sub)",
+          }}
+        >
+          No upcoming events.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -319,6 +400,7 @@ export default function EventsSection() {
         className="max-w-7xl mx-auto flex items-stretch"
         style={{ gap: "10px" }}
       >
+        {/* Left peek card — previous event */}
         {prevEvent ? (
           <PeekCard
             event={prevEvent}
@@ -328,11 +410,13 @@ export default function EventsSection() {
           <div style={{ width: "5%", flexShrink: 0 }} />
         )}
 
+        {/* Visible event cards */}
         <div className="flex flex-1" style={{ gap: "10px" }}>
           {visibleEvents.map((event, i) =>
             event ? (
-              <EventCard key={event.id} event={event} />
+              <EventCard key={event.id} event={event} colorIndex={i} />
             ) : (
+              // Empty placeholder to maintain layout when fewer than 3 events
               <div
                 key={`empty-${i}`}
                 className="flex-1"
@@ -347,6 +431,7 @@ export default function EventsSection() {
           )}
         </div>
 
+        {/* Right peek card — next event */}
         {nextEvent ? (
           <PeekCard
             event={nextEvent}
@@ -357,29 +442,32 @@ export default function EventsSection() {
         )}
       </div>
 
-      {/* Dot indicators: one dot per possible starting position */}
+      {/* Dot indicators — one per carousel position */}
       <div
         className="flex justify-center"
         style={{ gap: "6px", marginTop: "18px" }}
       >
-        {Array.from({ length: EVENTS.length - VISIBLE_COUNT + 1 }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setStartIndex(i)}
-            style={{
-              width: "6px",
-              height: "6px",
-              borderRadius: "50%",
-              border: "none",
-              cursor: "pointer",
-              background:
-                i === startIndex
-                  ? "var(--color-durban-gold)"
-                  : "var(--color-durban-wave)",
-              transition: "background 0.2s",
-            }}
-          />
-        ))}
+        {Array.from(
+          { length: Math.max(0, events.length - VISIBLE_COUNT + 1) },
+          (_, i) => (
+            <button
+              key={i}
+              onClick={() => setStartIndex(i)}
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                border: "none",
+                cursor: "pointer",
+                background:
+                  i === startIndex
+                    ? "var(--color-durban-gold)"
+                    : "var(--color-durban-wave)",
+                transition: "background 0.2s",
+              }}
+            />
+          ),
+        )}
       </div>
     </section>
   );

@@ -25,5 +25,14 @@ const verifyToken = (req, res, next) => {
     res.status(401).json({ message: "Invalid or expired token." });
   }
 };
+// ADMIN GUARD — runs after verifyToken
+// Checks that the logged in user has the admin role
+// Used on any route that only admins should access
+const verifyAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+  next();
+};
 
-module.exports = verifyToken;
+module.exports = { verifyToken, verifyAdmin };

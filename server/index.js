@@ -4,7 +4,9 @@ const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth");
 const eventRoutes = require("./routes/events");
 const serviceRoutes = require("./routes/services");
-
+const adminRoutes = require("./routes/admin");
+const newsRoutes = require("./routes/news");
+const reportsRoutes = require("./routes/reports");
 dotenv.config();
 
 const pool = require("./config/db");
@@ -25,6 +27,9 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/services", serviceRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/news", newsRoutes);
+app.use("/api/reports", reportsRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "eThekwini API is running" });

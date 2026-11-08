@@ -1,56 +1,14 @@
-import React, { useState } from "react";
-
-const SERVICES = [
-  {
-    id: 1,
-    title: "Electricity",
-    description:
-      "Report outages, check load shedding schedules and query prepaid meters.",
-    link: "#electricity",
-  },
-  {
-    id: 2,
-    title: "Water & Sanitation",
-    description:
-      "Report burst pipes, no water supply or sewage issues in your area.",
-    link: "#water",
-  },
-  {
-    id: 3,
-    title: "Roads & Potholes",
-    description:
-      "Log road defects, potholes and infrastructure damage on your street.",
-    link: "#roads",
-  },
-  {
-    id: 4,
-    title: "Waste Collection",
-    description:
-      "Check your collection day, report missed pickups or illegal dumping.",
-    link: "#waste",
-  },
-  {
-    id: 5,
-    title: "Public Safety",
-    description:
-      "Report broken streetlights, unsafe structures or crime hotspots.",
-    link: "#safety",
-  },
-  {
-    id: 6,
-    title: "Health Services",
-    description:
-      "Find your nearest clinic, check operating hours and get referral info.",
-    link: "#health",
-  },
-];
+import React, { useState, useEffect } from "react";
+import api from "./api/axios";
 
 function ServiceCard({ service }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <a
-      href={service.link}
+      href={
+        service.link || `#${service.name?.toLowerCase().replace(/\s+/g, "-")}`
+      }
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative flex flex-col bg-white rounded-lg p-7 transition-all duration-200"
@@ -64,6 +22,18 @@ function ServiceCard({ service }) {
           : "0 2px 8px rgba(0,0,0,0.04)",
       }}
     >
+      {/* Status dot — shows operational/disrupted state from the database */}
+      {service.status && (
+        <span
+          className="absolute top-4 right-4 w-2 h-2 rounded-full"
+          style={{
+            background:
+              service.status === "operational" ? "#22c55e" : "#E63946",
+          }}
+          title={service.status}
+        />
+      )}
+
       <h3
         style={{
           fontFamily: "var(--font-heading)",
@@ -78,7 +48,8 @@ function ServiceCard({ service }) {
           transition: "color 0.2s",
         }}
       >
-        {service.title}
+        {/* Backend uses 'name', hardcoded data used 'title' — handle both */}
+        {service.name || service.title}
       </h3>
       <p
         style={{
@@ -96,6 +67,86 @@ function ServiceCard({ service }) {
 }
 
 export default function ServicesSection() {
+  // services holds data from the backend
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch services from backend when component mounts
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const res = await api.get("/services");
+        setServices(res.data);
+      } catch (err) {
+        console.error("Failed to fetch services:", err);
+        setError("Could not load services.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchServices();
+  }, []); // empty array = run once on mount
+
+  // -----------------------------------------------------------------------
+  // LOADING STATE
+  // -----------------------------------------------------------------------
+  if (loading) {
+    return (
+      <section
+        className="w-full py-20 px-6 md:px-12 flex items-center justify-center"
+        style={{ background: "var(--color-durban-sand)", minHeight: "400px" }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            color: "var(--color-durban-sub)",
+            fontSize: "var(--text-section-sub)",
+          }}
+        >
+          Loading services...
+        </p>
+      </section>
+    );
+  }
+
+  // -----------------------------------------------------------------------
+  // ERROR STATE
+  // -----------------------------------------------------------------------
+  if (error) {
+    return (
+      <section
+        className="w-full py-20 px-6 md:px-12 flex items-center justify-center"
+        style={{ background: "var(--color-durban-sand)", minHeight: "400px" }}
+      >
+        <p style={{ color: "#E63946", fontFamily: "var(--font-body)" }}>
+          {error}
+        </p>
+      </section>
+    );
+  }
+
+  // -----------------------------------------------------------------------
+  // EMPTY STATE — database has no services yet
+  // -----------------------------------------------------------------------
+  if (services.length === 0) {
+    return (
+      <section
+        className="w-full py-20 px-6 md:px-12 flex items-center justify-center"
+        style={{ background: "var(--color-durban-sand)", minHeight: "400px" }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            color: "var(--color-durban-sub)",
+          }}
+        >
+          No services available.
+        </p>
+      </section>
+    );
+  }
+
   return (
     <section
       className="w-full py-20 px-6 md:px-12"
@@ -129,16 +180,16 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        {/* Grid */}
+        {/* Services grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {SERVICES.map((service) => (
+          {services.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
         </div>
 
-        {/* CTA */}
+        {/* CTA strip */}
         <div
-          className="mt-6 flex flex-col md:flex-row items-center  justify-between gap-4 px-8 py-8 rounded-xl"
+          className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 px-8 py-8 rounded-xl"
           style={{ background: "var(--color-durban-green)" }}
         >
           <p
