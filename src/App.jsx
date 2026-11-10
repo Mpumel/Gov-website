@@ -1,22 +1,14 @@
 import { useState } from "react";
-import NewsSection from "./News.jsx";
-import Landing from "./Landing.jsx";
+import { Outlet } from "react-router-dom";
 import Header from "./Header.jsx";
-import ServicesSection from "./ServicesSection.jsx";
-import "./App.css";
-import EventsSection from "./eventSection.jsx";
-import TourDurban from "./tourSection.jsx";
 import Footer from "./footer.jsx";
+import "./App.css";
 
 function App() {
   return (
     <>
       <Header />
-      <Landing />
-      <NewsSection />
-      <ServicesSection />
-      <EventsSection />
-      <TourDurban />
+      <Outlet />
       <Footer />
     </>
   );

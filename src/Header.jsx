@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 const SA_LANGUAGES = [
   { code: "EN", name: "English" },
@@ -25,15 +26,7 @@ const WORLD_LANGUAGES = [
   { code: "JA", name: "日本語" },
 ];
 
-const NAV_LINKS = [
-  "Home",
-  "Services",
-  "News",
-  "Events",
-  "About",
-  "Tourism",
-  "Council",
-];
+const NAV_LINKS = ["Home", "Services", "News", "Events", "About"];
 
 function LanguageSelector() {
   const [open, setOpen] = useState(false);
@@ -194,15 +187,15 @@ export default function Header() {
       <div className="hidden md:flex bg-white border-b border-gray-200 px-6 md:px-12 items-center justify-between h-14">
         <nav className="flex items-center h-full">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link}
-              href={`#${link.toLowerCase()}`}
+              to={link === "Home" ? "/" : `/${link.toLowerCase()}`}
               className="text-sm font-medium uppercase tracking-wider text-gray-500
               px-4 h-14 flex items-center border-b-2 border-transparent
               hover:text-[#0F1F0F] hover:border-[#C8922A] transition-all"
             >
               {link}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -240,32 +233,32 @@ export default function Header() {
           <ul className="flex flex-col gap-1 pt-4">
             {NAV_LINKS.map((link) => (
               <li key={link} className="border-b border-white/5">
-                <a
-                  href={`#${link.toLowerCase()}`}
+                <Link
+                  to={link === "Home" ? "/" : `/${link.toLowerCase()}`}
                   className="block px-4 py-3 text-white/70 hover:text-white
                   uppercase text-xs tracking-widest font-semibold transition-colors"
                 >
                   {link}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
           <div className="mt-5 flex gap-3">
-            <a
-              href="/register"
+            <Link
+              to="/register"
               className="flex-1 text-center text-xs font-bold uppercase tracking-widest
               border border-white/20 text-white/60 px-4 py-3 hover:text-white transition-colors"
             >
               Register
-            </a>
-            <a
-              href="/login"
+            </Link>
+            <Link
+              to="/login"
               className="flex-1 text-center text-xs font-bold uppercase tracking-widest
               border border-[#C8922A] text-[#C8922A] px-4 py-3
               hover:bg-[#C8922A] hover:text-[#0F1F0F] transition-all"
             >
               Sign in
-            </a>
+            </Link>
           </div>
         </div>
       )}
